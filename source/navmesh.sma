@@ -66,6 +66,7 @@ enum _:m_hNavRelativeDirType
 	UP,
 	DOWN
 }
+
 enum _:m_hHash
 {
 	H_NEXT = 0,
@@ -86,6 +87,7 @@ enum _:m_hExtent
 	EX_LOW = 0,
 	EX_HIGH
 }
+
 new g_hMenu;
 new g_pLaserBeam;
 
