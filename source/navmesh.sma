@@ -11,12 +11,11 @@
 // nav_file.cpp https://github.com/s1lentq/ReGameDLL_CS/blob/f57d28fe721ea4d57d10c010d15d45f05f2f5bad/regamedll/game_shared/bot/nav_file.cpp#L754
 
 // Necessary defines
-#define TASK_DRAWNAV       		32423
-#define MAX_AREAS				1320
+#define MAX_AREAS			1320
 #define NAV_MAGIC_NUMBER		0xFEEDFACE
 
 // Macros
-#define is_valid_area(%1)				(-1 <= %1 < MAX_AREAS)
+#define is_valid_area(%1)		(-1 <= %1 < MAX_AREAS)
 
 // Enumerators
 enum _:m_hNavAttributeType
@@ -24,7 +23,7 @@ enum _:m_hNavAttributeType
 	NAV_CROUCH  = 0x01, 	// must crouch to use this node/area
 	NAV_JUMP    = 0x02, 	// must jump to traverse this area
 	NAV_PRECISE = 0x04, 	// do not adjust for obstacles, just move along area
-	NAV_NO_JUMP = 0x08 		// inhibit discontinuity jumping
+	NAV_NO_JUMP = 0x08 	// inhibit discontinuity jumping
 }
 
 enum _:m_hNavDirType
