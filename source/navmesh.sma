@@ -231,7 +231,7 @@ public LoadNavigationMap()
 	server_print("m_swZ: %s^n", szSwZ);
     
 	fclose(iFile);
-	return 1;
+	return NAV_OK;
 }
 
 stock Navmesh_ConvertExtent(Float:vExtent[], szOutput[], len)
