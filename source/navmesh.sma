@@ -87,10 +87,13 @@ enum _:m_hExtent
 	EX_HIGH
 }
 
+// Menu handler
 new g_hMenu;
-new g_pLaserBeam;
 
+// Arrays
 new Array:g_aAreaID, Array:g_aAreaNextID, Array:g_aAttributeFlags, Array:g_aCenter, Array:g_aExtent, Array:g_aNorthEast, Array:g_aSouthWest;
+
+// Global strings
 new g_szMapName[32];
 
 public plugin_precache()
