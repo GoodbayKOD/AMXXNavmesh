@@ -212,6 +212,7 @@ public LoadNavigationMap()
 	GameArray_Update(g_aAttributeFlags, iFlags);
 	server_print("m_attributeFlags: %d", iFlags);
     
+    	// NOTE: nothing loads from here
 	// load extent of area
 	fread_blocks(iFile, _:szExtent, charsmax(szExtent), BLOCK_CHAR);
 	ArrayPushString(g_aExtent, szExtent);
