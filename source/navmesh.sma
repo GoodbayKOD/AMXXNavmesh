@@ -96,11 +96,11 @@ new g_szMapName[32];
 public plugin_precache()
 {
 	// Create arrays
-	g_aAreaID 			= ArrayCreate();
+	g_aAreaID 		= ArrayCreate();
 	g_aAreaNextID 		= ArrayCreate();
 	g_aAttributeFlags 	= ArrayCreate();
-	g_aCenter			= ArrayCreate(64);
-	g_aExtent 			= ArrayCreate(72);
+	g_aCenter		= ArrayCreate(64);
+	g_aExtent 		= ArrayCreate(72);
 	g_aNorthEast		= ArrayCreate(12);
 	g_aSouthWest		= ArrayCreate(12);
     
@@ -108,7 +108,7 @@ public plugin_precache()
 	get_mapname(g_szMapName, charsmax(g_szMapName));
 	strtolower(g_szMapName);
     
-    // Load nav
+   	// Load nav
 	LoadNavigationMap();
 }
 
@@ -156,6 +156,7 @@ public cmd_areainfo(const pPlayer, level, cid)
 	console_print(pPlayer, "m_extent.hi.z: %.6f^nm_neZ: %.6f^nm_swZ: %.6f^n=======================", vHigh[2], fNeZ, fSwZ);
 	return 1;
 }
+
 public LoadNavigationMap()
 {
 	new szPath[64];
@@ -214,7 +215,7 @@ public LoadNavigationMap()
 	// load extent of area
 	fread_blocks(iFile, _:szExtent, charsmax(szExtent), BLOCK_CHAR);
 	ArrayPushString(g_aExtent, szExtent);
-    server_print("m_extent: %s^n", szExtent);
+    	server_print("m_extent: %s^n", szExtent);
     
 	// update centroid
 	Navmesh_UpdateCentroID(i);
@@ -225,7 +226,7 @@ public LoadNavigationMap()
 	ArrayPushString(g_aNorthEast, szNeZ);
 	ArrayPushString(g_aSouthWest, szSwZ);
     
-    server_print("m_neZ: %s^n", szNeZ);
+   	server_print("m_neZ: %s^n", szNeZ);
 	server_print("m_swZ: %s^n", szSwZ);
     
 	fclose(iFile);
