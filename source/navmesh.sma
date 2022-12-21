@@ -7,7 +7,7 @@
 // 21/12/2022 02:41 a.m
 // not yet functional
 // I continue to make progress in obtaining data from the archive
-// I am experiencing problems getting the file data from the m_extent forward
+// I am experiencing problems getting the file data from the m_extent forward (FIXED)
 // nav_file.cpp https://github.com/s1lentq/ReGameDLL_CS/blob/f57d28fe721ea4d57d10c010d15d45f05f2f5bad/regamedll/game_shared/bot/nav_file.cpp#L754
 
 // Necessary defines
@@ -202,34 +202,45 @@ public LoadNavigationMap()
 	fread(iFile, iID, BLOCK_INT);
 	GameArray_Update(g_aAreaID, iID);
 	server_print("m_id: %d", iID);
-    
+
 	// update nextID to avoid collisions
 	GameArray_Update(g_aAreaNextID, iID + 1);
 	server_print("m_nextID: %d", iID + 1);
-    
+
 	// load attribute flags
 	fread(iFile, iFlags, BLOCK_CHAR);
 	GameArray_Update(g_aAttributeFlags, iFlags);
 	server_print("m_attributeFlags: %d", iFlags);
-    
-    	// NOTE: nothing loads from here
+
 	// load extent of area
-	fread_blocks(iFile, _:szExtent, charsmax(szExtent), BLOCK_CHAR);
+	fread_blocks(iFile, _:vExtent, 6, BLOCK_INT);
+
+	// convert into string
+	Navmesh_ConvertExtent(vExtent, szExtent, charsmax(szExtent));
+
+	// save
 	ArrayPushString(g_aExtent, szExtent);
-    	server_print("m_extent: %s^n", szExtent);
-    
-	// update centroid
-	Navmesh_UpdateCentroID(i);
-    
+
+	// print (test)
+	server_print("m_extent: lo %.6f %.6f %.6f hi %.6f %.6f %.6f^n", vExtent[0], vExtent[1], vExtent[2], vExtent[3], vExtent[4], vExtent[5]);
+
+	// update center
+	Navmesh_UpdateCentroID(vExtent);
+
 	// load heights of implicit corners
-	fread_blocks(iFile, _:szNeZ, charsmax(szNeZ), BLOCK_CHAR);
-	fread_blocks(iFile, _:szSwZ, charsmax(szSwZ), BLOCK_CHAR);
-	ArrayPushString(g_aNorthEast, szNeZ);
-	ArrayPushString(g_aSouthWest, szSwZ);
-    
-   	server_print("m_neZ: %s^n", szNeZ);
-	server_print("m_swZ: %s^n", szSwZ);
-    
+	fread_blocks(iFile, _:fCorner, 2, BLOCK_INT);
+
+	// convert into string
+	float_to_str(fCorner[0], szCorner[0], charsmax(szCorner[]));
+	float_to_str(fCorner[1], szCorner[1], charsmax(szCorner[]));
+
+	// save
+	ArrayPushString(g_aNorthEast, szCorner[0]);
+	ArrayPushString(g_aSouthWest, szCorner[1]);
+
+	// print (test)
+	server_print("m_neZ: %.6f^nm_swZ: %.6f", fCorner[0], fCorner[1]);
+	
 	fclose(iFile);
 	return NAV_OK;
 }
@@ -237,48 +248,39 @@ public LoadNavigationMap()
 stock Navmesh_ConvertExtent(Float:vExtent[], szOutput[], len)
 {
 	// Convert into string
-	formatex(szOutput, len, "%s %s %s %s %s %s", vExtent[0], vExtent[1], vExtent[2], vExtent[3], vExtent[4], vExtent[5]);
-	server_print("Extent: %s^n", szOutput);
+	formatex(szOutput, len, "%.6f %.6f %.6f %.6f %.6f %.6f", vExtent[0], vExtent[1], vExtent[2], vExtent[3], vExtent[4], vExtent[5]);
 }
 
-stock Navmesh_UpdateCentroID(const iArea)
+stock Navmesh_UpdateCentroID(const Float:vExtent[6])
 {
-	if(!is_valid_area(iArea))
-		return 0;
-        
-	new Float:vLow[3], Float:vHigh[3], Float:vCenter[3];
-	new szCenter[64];
-    
-	Navmesh_GetExtent(iArea, m_hExtent:EX_LOW, vLow);
-	Navmesh_GetExtent(iArea, m_hExtent:EX_HIGH, vHigh);
-    
-	vCenter[0] = ((vLow[0] + vHigh[0]) / 2.0);
-	vCenter[1] = ((vLow[1] + vHigh[1]) / 2.0);
-	vCenter[2] = ((vLow[2] + vHigh[2]) / 2.0);
-    
+	new Float:vCenter[3], szCenter[64];
+
+	vCenter[0] = ((vExtent[0] + vExtent[3]) / 2.0);
+	vCenter[1] = ((vExtent[1] + vExtent[4]) / 2.0);
+	vCenter[2] = ((vExtent[2] + vExtent[5]) / 2.0);
+
 	vec_to_str(vCenter, szCenter, charsmax(szCenter));
 	ArrayPushString(g_aCenter, szCenter);
-	return 1;
 }
 
 stock Navmesh_GetExtent(const iArea, const m_hExtent:iExtent, Float:vOutput[])
 {
 	if(!is_valid_area(iArea))
 		return 0;
-        
+
 	new szExtent[72], szPos[6][18];
 	ArrayGetString(g_aExtent, iArea, szExtent, charsmax(szExtent));
-    
+
 	if(szExtent[0] == EOS)
 		return 0;
-        
+
 	parse(szExtent, szPos[0], charsmax(szPos[]), szPos[1], charsmax(szPos[]), szPos[2], charsmax(szPos[]), szPos[3], charsmax(szPos[]), szPos[4], charsmax(szPos[]), 
 	szPos[5], charsmax(szPos[]));
-    
+
 	vOutput[0] = (iExtent == m_hExtent:EX_LOW) ? str_to_float(szPos[0]) : str_to_float(szPos[3]);
 	vOutput[1] = (iExtent == m_hExtent:EX_LOW) ? str_to_float(szPos[1]) : str_to_float(szPos[4]);
 	vOutput[2] = (iExtent == m_hExtent:EX_LOW) ? str_to_float(szPos[2]) : str_to_float(szPos[5]);
-    
+
 	return 1;
 }
 
@@ -286,17 +288,15 @@ stock Navmesh_GetCenter(const iArea, Float:vOutput[])
 {
 	if(!is_valid_area(iArea))
 		return 0;
-        
+
 	new szCenter[64], szPos[3][18];
-    
 	ArrayGetString(g_aCenter, iArea, szCenter, charsmax(szCenter));
-    
+
 	if(szCenter[0] == EOS)
 		return 0;
-        
+
 	parse(szCenter, szPos[0], charsmax(szPos[]), szPos[1], charsmax(szPos[]), szPos[2], charsmax(szPos[]));
 	str_to_vec(szPos, vOutput);
-    
 	return 1;
 }
 
@@ -320,16 +320,8 @@ stock Float:Navmesh_GetCornerZ(const iArea, const m_hNavCornerType:iCorner)
 	return str_to_float(szCorner);
 }
 
-stock vec_to_str(const Float:vVector[], szOutput[], len)
-{
-	new szVector[3][18];
-    
-	float_to_str(vVector[0], szVector[0], charsmax(szVector));
-	float_to_str(vVector[1], szVector[1], charsmax(szVector));
-	float_to_str(vVector[2], szVector[2], charsmax(szVector));
-    
-	formatex(szOutput, len, "%s %s %s", szVector[0], szVector[1], szVector[2]);
-}
+stock vec_to_str(Float:vVector[], szOutput[], len)
+	formatex(szOutput, len, "%.6f %.6f %.6f", vVector[0], vVector[1], vVector[2]);
 
 stock str_to_vec(const szValue[][], Float:vOutput[])
 {
