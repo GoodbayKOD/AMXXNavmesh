@@ -15,7 +15,6 @@ Para luego poder usarlos en la creacion de pathfindings para Bots y NPC.
 * ReGameDLL (última versión disponible)
 * Modulo Reapi (última versión disponible)
 
-## ==========================================
 
 - English:
 
