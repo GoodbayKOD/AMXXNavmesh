@@ -1,8 +1,6 @@
 # AMXXNavmesh
 
- - Español:
-
-## Proyecto
+## Proyecto (Español)
 Un sistema que se basa en la obtención de datos de los archivos .nav
 Para luego poder usarlos en la creacion de pathfindings para Bots y NPC.
 
@@ -16,9 +14,7 @@ Para luego poder usarlos en la creacion de pathfindings para Bots y NPC.
 * Modulo Reapi (última versión disponible)
 
 
-- English:
-
-## Project
+## Project (English)
 A system that is based on obtaining data from .nav files.
 To be used in the creation of pathfindings for Bots and NPC.
 
