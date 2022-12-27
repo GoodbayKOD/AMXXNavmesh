@@ -363,10 +363,8 @@ public Navmesh_LoadArea(const iFile, const iVersion, const iArea)
 	// print (test)
 	server_print("m_neZ: %.6f^nm_swZ: %.6f", fCorner[0], fCorner[1]);
 
-	if(iArea == 15)
-	{
+	if(equal(g_szMapName, "colapse") && iArea == 15)
 		log_amx("Flags: %d | m_neZ: %.6f^nm_swZ: %.6f", iFlags, fCorner[0], fCorner[1]);
-	}
 
 	for(d = 0; d < m_hNavDirType; d++)
 	{
