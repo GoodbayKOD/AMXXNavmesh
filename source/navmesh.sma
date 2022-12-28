@@ -9,12 +9,12 @@
 // https://github.com/s1lentq/ReGameDLL_CS/blob/f57d28fe721ea4d57d10c010d15d45f05f2f5bad/regamedll/game_shared/bot/nav_file.h
 // https://github.com/s1lentq/ReGameDLL_CS/blob/f57d28fe721ea4d57d10c010d15d45f05f2f5bad/regamedll/game_shared/bot/nav.h
 
-// 21/12/2022 02:41 a.m
+// 21/12/2022 | 02:41 a.m
 // not yet functional
 // I continue to make progress in obtaining data from the archive
 // I am experiencing problems getting the file data from the m_extent forward
 
-// 27/12/2022 20:05 p.m.
+// 27/12/2022 | 20:05 p.m.
 // not yet functional
 // I am experiencing problems in the area loop, out of nowhere it starts getting wrong values
 
