@@ -20,10 +20,10 @@
 
 // Necessary defines
 #define TASK_DRAWNAV       		32423
-#define MAX_AREAS				1320
+#define MAX_AREAS			1320
 
 #define NAV_MAGIC_NUMBER		-17958194 // (0xFEEDFACE)
-#define NAV_VERSION				5
+#define NAV_VERSION			5
 
 // Macros
 #define check_area(%1)			(0 <= %1 <= MAX_AREAS)
@@ -34,7 +34,7 @@ enum _:m_hNavAttributeType
 	NAV_CROUCH  = 0x01, 	// must crouch to use this node/area
 	NAV_JUMP    = 0x02, 	// must jump to traverse this area
 	NAV_PRECISE = 0x04, 	// do not adjust for obstacles, just move along area
-	NAV_NO_JUMP = 0x08 		// inhibit discontinuity jumping
+	NAV_NO_JUMP = 0x08 	// inhibit discontinuity jumping
 }
 
 enum _:m_hNavDirType
@@ -141,12 +141,12 @@ new g_szMapName[32];
 public plugin_precache()
 {
 	// Create arrays
-	g_aAreaID 			= ArrayCreate();
+	g_aAreaID 		= ArrayCreate();
 	g_aAreaNextID 		= ArrayCreate();
 	g_aAttributeFlags 	= ArrayCreate();
 	g_aApproachCount	= ArrayCreate();
-	g_aCenter			= ArrayCreate(64);
-	g_aExtent 			= ArrayCreate(82);
+	g_aCenter		= ArrayCreate(64);
+	g_aExtent 		= ArrayCreate(82);
 	g_aNorthEast		= ArrayCreate(12);
 	g_aSouthWest		= ArrayCreate(12);
 
@@ -165,7 +165,7 @@ public plugin_init()
 
 public cmd_areainfo(const pPlayer, level, cid)
 {
-    // Get area param
+    	// Get area param
 	new iArea = read_argv_int(1);
 
 	// Invalid area
@@ -282,7 +282,7 @@ public Navmesh_LoadMap()
 		server_print("Place #%d: %s", i, szPlaceName);
 	}
 
-    // Print basic info
+    	// Print basic info
 	server_print("^nNavMesh Info Data - navmesh.amxx^nMagic Number: %d^nVersion: %d^nBSPSize: %d^nEntries: %d^n[", iMagic, iVersion, iSaveBSPSize, iEntries);
 
 	fread(iFile, iAreaCounts, BLOCK_INT);
