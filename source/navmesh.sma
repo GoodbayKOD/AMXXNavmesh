@@ -26,7 +26,7 @@
 #define NAV_VERSION				5
 
 // Macros
-#define check_area(%1)				(0 <= %1 <= MAX_AREAS)
+#define check_area(%1)			(0 <= %1 <= MAX_AREAS)
 
 // Enumerators
 enum _:m_hNavAttributeType
