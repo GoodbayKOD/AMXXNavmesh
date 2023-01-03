@@ -28,7 +28,7 @@
 // Macros
 #define check_area(%1)			(0 <= %1 <= MAX_AREAS)
 
-
+// Enumerators
 
 // Defines possible ways to move from one area to another
 // NOTE: First 4 directions MUST match NavDirType
