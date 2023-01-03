@@ -28,22 +28,7 @@
 // Macros
 #define check_area(%1)			(0 <= %1 <= MAX_AREAS)
 
-// Enumerators
-enum _:m_hNavAttributeType
-{
-	NAV_CROUCH  = 0x01, 	// must crouch to use this node/area
-	NAV_JUMP    = 0x02, 	// must jump to traverse this area
-	NAV_PRECISE = 0x04, 	// do not adjust for obstacles, just move along area
-	NAV_NO_JUMP = 0x08 	// inhibit discontinuity jumping
-}
 
-enum _:m_hNavDirType
-{
-	NORTH = 0,
-	EAST,
-	SOUTH,
-	WEST
-}
 
 // Defines possible ways to move from one area to another
 // NOTE: First 4 directions MUST match NavDirType
@@ -91,26 +76,33 @@ enum _:m_hNavErrorType
 	NAV_CORRUPT_DATA
 }
 
-enum _:MAX_BUFFER_DATA
+enum _:m_hNavAttributeType
 {
-	DATA_1 = 0,
-	DATA_2,
-	DATA_3,
-	DATA_4,
-	DATA_5
+	NAV_NONE,
+	NAV_CROUCH, 	// must crouch to use this node/area
+	NAV_JUMP, 		// must jump to traverse this area
+	NAV_PRECISE, 	// do not adjust for obstacles, just move along area
+	NAV_NO_JUMP 	// inhibit discontinuity jumping
 }
-new g_iBuffer[MAX_BUFFER_DATA];
 
-new const Rule_Flags[5][] =
+new const GameRules_AreaAttribute[m_hNavAttributeType][] =
 {
 	"NONE",
-	"CROUNCH",
+	"CROUCH",
 	"JUMP",
 	"PRECISE",
-	"NO_JUMP"
+	"NO-JUMP"
 }
 
-new const Rule_Directions[m_hNavDirType][] =
+enum _:m_hNavDirType
+{
+	NORTH = 0,
+	EAST,
+	SOUTH,
+	WEST
+}
+
+new const GameRules_AreaDirection[m_hNavDirType][] =
 {
 	"North",
 	"East",
@@ -184,8 +176,8 @@ public cmd_areainfo(const pPlayer, level, cid)
 	Navmesh_GetExtent(iArea, m_hExtent:EX_HIGH);
 
 	// Get corners
-	Navmesh_GetCornerZ(iArea, m_hNavCornerType:NORTH_EAST);
-	Navmesh_GetCornerZ(iArea, m_hNavCornerType:SOUTH_WEST);
+	g_fNeZ = Navmesh_GetCornerZ(iArea, m_hNavCornerType:NORTH_EAST);
+	g_SwZ = Navmesh_GetCornerZ(iArea, m_hNavCornerType:SOUTH_WEST);
 
 	// Print
 	console_print(pPlayer, "^n=======================^nm_id: %d^nm_nextID: %d^nm_attributeFlags: %d", ArrayGetCell(g_aAreaID, iArea), ArrayGetCell(g_aAreaNextID, iArea), 
@@ -317,7 +309,7 @@ public Navmesh_LoadArea(const iFile, const iVersion, const iArea)
 	// load attribute flags
 	fread(iFile, iFlags, BLOCK_CHAR);
 	GameArray_Update(g_aAttributeFlags, iFlags);
-	log_amx("Flag: %s", 0 < iFlags > sizeof(Rule_Flags) ? "ERROR" : Rule_Flags[iFlags]);
+	log_amx("Flag: %s", (nullptr < iFlags > m_hNavAttributeType) ? "ERROR" : GameRules_AreaAttribute[iFlags]);
 
 	// load extent of area
 	fread_blocks(iFile, _:vVector, 6, BLOCK_INT);
@@ -349,7 +341,7 @@ public Navmesh_LoadArea(const iFile, const iVersion, const iArea)
 
 		// load number of connections for this direction
 		fread(iFile, iCount, BLOCK_INT);
-		log_amx("Connections: %d - Direction: %s", iCount, Rule_Directions[d]);
+		log_amx("Connections: %d - Direction: %s", iCount, GameRules_AreaDirection[d]);
 
 		for(i = 0; i < iCount; i++)
 			fread(iFile, iConnect, BLOCK_INT);
@@ -504,35 +496,21 @@ stock Navmesh_GetCenter(const iArea)
 	return 1;
 }
 
-stock Navmesh_GetCornerZ(const iArea, const m_hNavCornerType:iCorner)
+stock Float:Navmesh_GetCornerZ(const iArea, const m_hNavCornerType:iCorner)
 {
-	new szCorner[16];
+	new szCorner[16], Float:fCornerZ;
 
-	switch(iCorner)
-	{
-		case NORTH_EAST:
-		{
-			ArrayGetString(g_aNorthEast, iArea, szCorner, charsmax(szCorner));
+	if(!(BIT(iCorner) & (BIT(NORTH_EAST) | BIT(SOUTH_EAST))))
+		return 0.0;
 
-			if(szCorner[0] == EOS)
-				return 0;
+	new Array:aCorner = (iCorner == NORTH_EAST) ? g_aNorthEast : g_aSouthWest;
 
-			g_fNeZ = str_to_float(szCorner);
-		}
-		case SOUTH_WEST:
-		{
-			ArrayGetString(g_aSouthWest, iArea, szCorner, charsmax(szCorner));
+	ArrayGetString(aCorner, iArea, szCorner, charsmax(szCorner));
 
-			if(szCorner[0] == EOS)
-				return 0;
+	if(szCorner[0] == EOS)
+		return 0.0;
 
-			g_fSwZ = str_to_float(szCorner);
-		}
-		default:
-			return 0;
-	}
-
-	return 1;
+	return str_to_float(szCorner);
 }
 
 stock vec_to_str(Float:vVector[], szOutput[], len)
