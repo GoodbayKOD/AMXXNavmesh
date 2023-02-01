@@ -503,9 +503,7 @@ stock Float:Navmesh_GetCornerZ(const iArea, const m_hNavCornerType:iCorner)
 	if(!(BIT(iCorner) & (BIT(NORTH_EAST) | BIT(SOUTH_EAST))))
 		return 0.0;
 
-	new Array:aCorner = (iCorner == NORTH_EAST) ? g_aNorthEast : g_aSouthWest;
-
-	ArrayGetString(aCorner, iArea, szCorner, charsmax(szCorner));
+	ArrayGetString((iCorner == NORTH_EAST) ? g_aNorthEast : g_aSouthWest, iArea, szCorner, charsmax(szCorner));
 
 	if(szCorner[0] == EOS)
 		return 0.0;
